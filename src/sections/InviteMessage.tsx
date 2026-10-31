@@ -1,0 +1,68 @@
+import { motion } from "framer-motion";
+import Reveal from "../components/Reveal";
+import Countdown from "../components/Countdown";
+import { wedding } from "../config";
+
+// The invitation verse reveals itself word by word
+function VerseWords({ text }: { text: string }) {
+  const words = text.split(" ");
+  return (
+    <motion.p
+      className="font-display text-2xl sm:text-[26px] italic leading-relaxed text-white"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: 0.05 } },
+      }}
+    >
+      {words.map((w, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          variants={{
+            hidden: { opacity: 0, y: 10, filter: "blur(4px)" },
+            show: {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            },
+          }}
+        >
+          {w}
+          {i < words.length - 1 ? " " : ""}
+        </motion.span>
+      ))}
+    </motion.p>
+  );
+}
+
+export default function InviteMessage() {
+  return (
+    <section className="relative flex flex-col items-center gap-12 px-6 py-24">
+      <Reveal className="flex max-w-lg flex-col items-center gap-6 text-center">
+        <span className="font-display text-xl sm:text-2xl tracking-[0.3em] text-[#ffd978] font-semibold drop-shadow-[0_2px_10px_rgba(255,217,102,0.4)]">
+          {wedding.verse.hindi}
+        </span>
+        <motion.img
+          src="/assets/mandala.png"
+          alt="Sacred Mandala"
+          className="w-24 sm:w-28 drop-shadow-[0_0_22px_rgba(255,217,102,0.7)] contrast-[1.2] brightness-110"
+          whileInView={{ rotate: 360 }}
+          viewport={{ once: true }}
+          transition={{ duration: 18, ease: "linear", repeat: Infinity }}
+        />
+        <VerseWords text={wedding.verse.text} />
+      </Reveal>
+
+      <Reveal delay={0.15} className="flex flex-col items-center gap-6">
+        <span className="text-xs sm:text-sm uppercase tracking-[0.45em] text-[#f8c7d4] font-medium">
+          Counting down to the big day
+        </span>
+        <Countdown targetISO={wedding.dateISO} />
+      </Reveal>
+    </section>
+  );
+}
